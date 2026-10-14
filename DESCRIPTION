@@ -9,7 +9,7 @@ Authors@R: c(
     person("David", "Watson", role = "aut",
         email = "david.watson@kcl.ac.uk"))
 Description: Causal ASCEND (Ancestral Scalable Causal discovEry via
-    iNherited Descent) infers ancestral (cause-before-effect) relations
+    iNherited Descent) infers ancestral relations
     among downstream molecular variables, such as gene expression, when
     a layer of upstream variables, such as genotypes or methylation
     sites, is known to precede them. Each conditional independence test
