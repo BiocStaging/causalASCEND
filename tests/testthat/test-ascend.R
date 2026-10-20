@@ -1,5 +1,6 @@
+set.seed(123)
 sim <- simulateTwoTier(n = 1000, nBackground = 20, nForeground = 8,
-    r2 = 0.7, sparsity = 0.7, pCross = 0.1, effect = 1.5, seed = 123)
+    r2 = 0.7, sparsity = 0.7, pCross = 0.1, effect = 1.5)
 
 test_that("ascend() returns a valid AscendResult", {
     res <- ascend(sim$background, sim$foreground)
@@ -16,8 +17,9 @@ test_that("ascend() returns a valid AscendResult", {
 })
 
 test_that("ascend() recovers most ancestral relations in a sparse graph", {
+    set.seed(1)
     easy <- simulateTwoTier(n = 2000, nBackground = 20, nForeground = 15,
-        r2 = 0.7, sparsity = 0.9, pCross = 0.2, effect = 0.9, seed = 1)
+        r2 = 0.7, sparsity = 0.9, pCross = 0.2, effect = 0.9)
     ev <- evaluateAncestral(ascend(easy$background, easy$foreground),
         trueAncestral(easy))
     expect_gt(ev$precision, 0.6)

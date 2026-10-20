@@ -61,8 +61,8 @@ Extract the inferred ancestral relations and the evidence behind them
 from the result of \code{\link[=ascend]{ascend()}}.
 }
 \examples{
-sim <- simulateTwoTier(n = 500, nBackground = 10, nForeground = 6,
-    seed = 1)
+set.seed(1)
+sim <- simulateTwoTier(n = 500, nBackground = 10, nForeground = 6)
 res <- ascend(sim$background, sim$foreground)
 ancestralMatrix(res)
 ancestralEdges(res)

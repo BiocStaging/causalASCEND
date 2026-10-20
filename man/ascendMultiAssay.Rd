@@ -34,8 +34,8 @@ Extracts the background and foreground experiments, keeps the samples
 }
 \examples{
 if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
-    sim <- simulateTwoTier(n = 300, nBackground = 10, nForeground = 5,
-        seed = 2)
+    set.seed(2)
+    sim <- simulateTwoTier(n = 300, nBackground = 10, nForeground = 5)
     ids <- paste0("s", seq_len(300))
     colnames(sim$background) <- colnames(sim$foreground) <- ids
     mae <- MultiAssayExperiment::MultiAssayExperiment(

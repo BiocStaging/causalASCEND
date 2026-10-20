@@ -27,8 +27,8 @@ NULL
 #'   listed once with `from` before `to` in the matrix order.
 #'
 #' @examples
-#' sim <- simulateTwoTier(n = 500, nBackground = 10, nForeground = 6,
-#'     seed = 1)
+#' set.seed(1)
+#' sim <- simulateTwoTier(n = 500, nBackground = 10, nForeground = 6)
 #' res <- ascend(sim$background, sim$foreground)
 #' ancestralMatrix(res)
 #' ancestralEdges(res)

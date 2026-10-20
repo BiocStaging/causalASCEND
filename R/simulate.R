@@ -24,22 +24,22 @@
 #'   to unit variance as it is drawn. Without it, background variances
 #'   grow along background paths and swamp the foreground signal when the
 #'   background is large.
-#' @param seed Optional random seed.
+#'
+#' @details Call [set.seed()] first for reproducible data.
 #'
 #' @return A list with `background` and `foreground` (numeric matrices,
 #'   features in rows, samples in columns), `adjacency` (the true
 #'   foreground graph, `adjacency[parent, child] = 1`) and `params`.
 #' @seealso [trueAncestral()], [ascend()]
 #' @examples
-#' sim <- simulateTwoTier(n = 200, nBackground = 5, nForeground = 4,
-#'     seed = 1)
+#' set.seed(1)
+#' sim <- simulateTwoTier(n = 200, nBackground = 5, nForeground = 4)
 #' dim(sim$background)
 #' sim$adjacency
 #' @export
 simulateTwoTier <- function(n, nBackground, nForeground, r2 = 0.5,
-                            sparsity = 0.9, pCross = 0.05, effect = 0.8,
-                            linear = 1, scaleBackground = TRUE,
-                            seed = NULL) {
+    sparsity = 0.9, pCross = 0.05, effect = 0.8,
+    linear = 1, scaleBackground = TRUE) {
     .checkScalar(n, "n", 2, Inf)
     .checkScalar(nBackground, "nBackground", 1, Inf)
     .checkScalar(nForeground, "nForeground", 1, Inf)
@@ -47,7 +47,6 @@ simulateTwoTier <- function(n, nBackground, nForeground, r2 = 0.5,
     .checkScalar(sparsity, "sparsity", 0, 1)
     .checkScalar(pCross, "pCross", 0, 1)
     .checkScalar(linear, "linear", 0, 1)
-    if (!is.null(seed)) set.seed(seed)
     dZ <- nBackground
     dX <- nForeground
 

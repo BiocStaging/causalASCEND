@@ -12,4 +12,5 @@
 #' @importFrom methods new is slot setClass setGeneric setMethod show
 #'   setValidity
 #' @importFrom utils head
+#' @importFrom SummarizedExperiment assay
 "_PACKAGE"

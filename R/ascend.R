@@ -53,16 +53,17 @@ NULL
 #' @seealso [ascendMultiAssay()] for a `MultiAssayExperiment`,
 #'   [simulateTwoTier()] for test data.
 #' @examples
+#' set.seed(123)
 #' sim <- simulateTwoTier(n = 1000, nBackground = 20, nForeground = 8,
-#'     r2 = 0.7, sparsity = 0.7, pCross = 0.1, effect = 1.5, seed = 123)
+#'     r2 = 0.7, sparsity = 0.7, pCross = 0.1, effect = 1.5)
 #' res <- ascend(sim$background, sim$foreground)
 #' res
 #' head(ancestralEdges(res))
 #' evaluateAncestral(res, trueAncestral(sim))
 #' @export
 ascend <- function(background, foreground, alpha = 0.05, alphaMB = 0.05,
-                   fdr = TRUE, minVotes = 1, prescreen = 0.30, maxIter = 10,
-                   verbose = FALSE, backgroundAssay = 1, foregroundAssay = 1) {
+    fdr = TRUE, minVotes = 1, prescreen = 0.30, maxIter = 10,
+    verbose = FALSE, backgroundAssay = 1, foregroundAssay = 1) {
     .checkScalar(alpha, "alpha", 0, 1)
     .checkScalar(alphaMB, "alphaMB", 0, 1)
     .checkScalar(prescreen, "prescreen", 0, 1)
@@ -87,11 +88,17 @@ ascend <- function(background, foreground, alpha = 0.05, alphaMB = 0.05,
 
     dat <- t(rbind(Z, X))
     dat[!is.finite(dat)] <- NA
-    C <- suppressWarnings(stats::cor(dat, use = "pairwise.complete.obs"))
-    const <- colnames(C)[is.na(diag(C))]
+    sds <- apply(dat, 2, stats::sd, na.rm = TRUE)
+    const <- colnames(dat)[is.na(sds) | sds == 0]
     if (length(const))
         warning(length(const), " constant feature(s) treated as independent ",
             "of all others: ", paste(utils::head(const, 5), collapse = ", "))
+    keep <- !colnames(dat) %in% const
+    C <- diag(ncol(dat))
+    dimnames(C) <- list(colnames(dat), colnames(dat))
+    if (any(keep))
+        C[keep, keep] <- stats::cor(dat[, keep, drop = FALSE],
+            use = "pairwise.complete.obs")
     C[is.na(C)] <- 0
     diag(C) <- 1
 
@@ -122,8 +129,8 @@ ascend <- function(background, foreground, alpha = 0.05, alphaMB = 0.05,
 #' @return An [AscendResult-class] object.
 #' @examples
 #' if (requireNamespace("MultiAssayExperiment", quietly = TRUE)) {
-#'     sim <- simulateTwoTier(n = 300, nBackground = 10, nForeground = 5,
-#'         seed = 2)
+#'     set.seed(2)
+#'     sim <- simulateTwoTier(n = 300, nBackground = 10, nForeground = 5)
 #'     ids <- paste0("s", seq_len(300))
 #'     colnames(sim$background) <- colnames(sim$foreground) <- ids
 #'     mae <- MultiAssayExperiment::MultiAssayExperiment(
@@ -132,7 +139,7 @@ ascend <- function(background, foreground, alpha = 0.05, alphaMB = 0.05,
 #' }
 #' @export
 ascendMultiAssay <- function(mae, background, foreground,
-                             backgroundAssay = 1, foregroundAssay = 1, ...) {
+    backgroundAssay = 1, foregroundAssay = 1, ...) {
     if (!requireNamespace("MultiAssayExperiment", quietly = TRUE))
         stop("ascendMultiAssay() needs the MultiAssayExperiment package")
     if (!methods::is(mae, "MultiAssayExperiment"))
@@ -180,11 +187,8 @@ ascendMultiAssay <- function(mae, background, foreground,
 
 ## Return a numeric matrix with features in rows and samples in columns.
 .asFeatureMatrix <- function(x, assay, arg, prefix) {
-    if (methods::is(x, "SummarizedExperiment")) {
-        if (!requireNamespace("SummarizedExperiment", quietly = TRUE))
-            stop("reading '", arg, "' needs the SummarizedExperiment package")
+    if (methods::is(x, "SummarizedExperiment"))
         x <- SummarizedExperiment::assay(x, assay)
-    }
     if (is.data.frame(x)) x <- as.matrix(x)
     if (methods::is(x, "Matrix") || methods::is(x, "DelayedArray"))
         x <- as.matrix(x)

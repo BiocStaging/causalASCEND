@@ -76,8 +76,9 @@ non-descendant relation and R3 (conditional independence) an
 ancestors are re-learned and the sweep repeats until nothing changes.
 }
 \examples{
+set.seed(123)
 sim <- simulateTwoTier(n = 1000, nBackground = 20, nForeground = 8,
-    r2 = 0.7, sparsity = 0.7, pCross = 0.1, effect = 1.5, seed = 123)
+    r2 = 0.7, sparsity = 0.7, pCross = 0.1, effect = 1.5)
 res <- ascend(sim$background, sim$foreground)
 res
 head(ancestralEdges(res))

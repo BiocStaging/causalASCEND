@@ -25,8 +25,9 @@ false positive and a false negative. Unresolved pairs are counted
 separately and are not scored.
 }
 \examples{
+set.seed(123)
 sim <- simulateTwoTier(n = 1000, nBackground = 20, nForeground = 8,
-    r2 = 0.7, sparsity = 0.7, pCross = 0.1, effect = 1.5, seed = 123)
+    r2 = 0.7, sparsity = 0.7, pCross = 0.1, effect = 1.5)
 res <- ascend(sim$background, sim$foreground)
 evaluateAncestral(res, trueAncestral(sim))
 }

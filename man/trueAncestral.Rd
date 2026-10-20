@@ -18,7 +18,8 @@ A 0/1 matrix with entry \verb{[a, b] = 1} if \code{a} is an ancestor of
 True ancestral relations of a simulated graph
 }
 \examples{
+set.seed(3)
 sim <- simulateTwoTier(n = 100, nBackground = 5, nForeground = 5,
-    sparsity = 0.5, seed = 3)
+    sparsity = 0.5)
 trueAncestral(sim)
 }

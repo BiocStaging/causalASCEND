@@ -6,8 +6,9 @@ test_that("ascend() reproduces the reference implementation", {
     ref <- readRDS(test_path("fixtures", "reference_results.rds"))
     for (r in ref) {
         a <- r$args
+        set.seed(a$seed)
         sim <- simulateTwoTier(a$n, a$dz, a$dx, r2 = a$r2, sparsity = a$sp,
-            pCross = a$pc, effect = a$xe, seed = a$seed)
+            pCross = a$pc, effect = a$xe)
         res <- ascend(sim$background, sim$foreground)
         expect_identical(ancestralMatrix(res), r$M)
         expect_equal(pairPValues(res), r$pairP)

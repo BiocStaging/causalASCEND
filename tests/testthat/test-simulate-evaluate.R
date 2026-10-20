@@ -1,6 +1,8 @@
 test_that("simulateTwoTier() is reproducible and respects the tiers", {
-    a <- simulateTwoTier(200, 5, 6, sparsity = 0.5, seed = 9)
-    b <- simulateTwoTier(200, 5, 6, sparsity = 0.5, seed = 9)
+    set.seed(9)
+    a <- simulateTwoTier(200, 5, 6, sparsity = 0.5)
+    set.seed(9)
+    b <- simulateTwoTier(200, 5, 6, sparsity = 0.5)
     expect_identical(a, b)
     expect_equal(dim(a$background), c(5, 200))
     expect_equal(dim(a$foreground), c(6, 200))
@@ -18,7 +20,8 @@ test_that("trueAncestral() closes paths transitively", {
 })
 
 test_that("evaluateAncestral() scores a perfect estimate as perfect", {
-    sim <- simulateTwoTier(200, 5, 6, sparsity = 0.5, seed = 9)
+    set.seed(9)
+    sim <- simulateTwoTier(200, 5, 6, sparsity = 0.5)
     truth <- trueAncestral(sim)
     ev <- evaluateAncestral(truth, truth)
     expect_equal(ev$fp, 0)

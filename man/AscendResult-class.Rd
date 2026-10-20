@@ -41,8 +41,8 @@ time spent in them, conditioning-set sizes and number of sweeps.}
 }}
 
 \examples{
-sim <- simulateTwoTier(n = 500, nBackground = 10, nForeground = 6,
-    seed = 1)
+set.seed(1)
+sim <- simulateTwoTier(n = 500, nBackground = 10, nForeground = 6)
 res <- ascend(sim$background, sim$foreground)
 res
 }

@@ -21,7 +21,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
@@ -53,7 +53,7 @@ confounders and lower its accuracy.
 
 # Installation
 
-```{r, eval = FALSE}
+```{r install, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("causalASCEND")
@@ -65,17 +65,18 @@ We simulate a two-tier system with 20 background and 15 foreground
 variables measured on 2,000 samples. Matrices have features in rows and
 samples in columns, as in other Bioconductor containers.
 
-```{r}
+```{r simulate}
 library(causalASCEND)
+set.seed(1)
 sim <- simulateTwoTier(n = 2000, nBackground = 20, nForeground = 15,
-    r2 = 0.7, sparsity = 0.9, pCross = 0.2, effect = 0.9, seed = 1)
+    r2 = 0.7, sparsity = 0.9, pCross = 0.2, effect = 0.9)
 dim(sim$background)
 dim(sim$foreground)
 ```
 
 `ascend()` takes the two layers and returns an `AscendResult`.
 
-```{r}
+```{r run}
 res <- ascend(sim$background, sim$foreground)
 res
 ```
@@ -85,7 +86,7 @@ res
 `ancestralEdges()` lists the relations ASCEND committed to, with the rule
 that produced each one and its evidence.
 
-```{r}
+```{r edges}
 edges <- ancestralEdges(res)
 head(edges)
 table(edges$relation, edges$rule)
@@ -94,12 +95,12 @@ table(edges$relation, edges$rule)
 The relations are:
 
 * `ancestor`: `from` is a causal ancestor of `to` (a direct or indirect
-  cause);
+    cause);
 * `non-descendant`: `from` is not caused by `to`, but ASCEND could not
-  show that it causes `to`;
+    show that it causes `to`;
 * `unrelated` and `unresolved` pairs are returned on request:
 
-```{r}
+```{r all-relations}
 all <- ancestralEdges(res, include = c("ancestor", "non-descendant",
     "unrelated", "unresolved"))
 table(all$relation)
@@ -117,14 +118,14 @@ The full matrix is available too: entry `[a, b]` is 1 if `a` is an
 ancestor of `b`, 0.5 if `a` is not a descendant of `b`, 0 if the two are
 unrelated and `NA` if unresolved.
 
-```{r}
+```{r matrix}
 round(ancestralMatrix(res)[1:6, 1:6], 1)
 ```
 
 Because the data are simulated, we can score the result against the
 true graph.
 
-```{r}
+```{r evaluate}
 evaluateAncestral(res, trueAncestral(sim))
 ```
 
@@ -133,7 +134,7 @@ evaluateAncestral(res, trueAncestral(sim))
 `ascend()` also accepts `SummarizedExperiment` objects; choose the assay
 with `backgroundAssay` and `foregroundAssay`.
 
-```{r, eval = requireNamespace("SummarizedExperiment", quietly = TRUE)}
+```{r se}
 library(SummarizedExperiment)
 geno <- SummarizedExperiment(assays = list(dosage = sim$background))
 expr <- SummarizedExperiment(assays = list(logcounts = sim$foreground))
@@ -146,7 +147,7 @@ For a `MultiAssayExperiment`, name the two experiments.
 `ascendMultiAssay()` matches samples through the sample map and keeps
 those present in both.
 
-```{r, eval = requireNamespace("MultiAssayExperiment", quietly = TRUE)}
+```{r mae, eval = requireNamespace("MultiAssayExperiment", quietly = TRUE)}
 library(MultiAssayExperiment)
 mae <- MultiAssayExperiment(experiments = list(snp = sim$background,
     rna = sim$foreground))
@@ -157,18 +158,18 @@ identical(ancestralMatrix(res_mae), ancestralMatrix(res))
 # Settings
 
 * `alpha` and `alphaMB` are the significance levels of the orientation
-  rules and of the nearest-ancestor searches (both 0.05).
+    rules and of the nearest-ancestor searches (both 0.05).
 * `fdr = TRUE` applies a Benjamini-Hochberg correction to the pairwise
-  tests of each sweep.
+    tests of each sweep.
 * `minVotes` is the number of agreeing witnesses needed before a
-  direction is committed. Raising it gives fewer, more reliable
-  directions.
+    direction is committed. Raising it gives fewer, more reliable
+    directions.
 * `prescreen` limits each foreground variable's background candidates to
-  those marginally associated with it (Benjamini-Hochberg threshold 0.3).
-  This bounds the cost when the background is large; set it to 1 to keep
-  every background variable.
+    those marginally associated with it (Benjamini-Hochberg threshold 0.3).
+    This bounds the cost when the background is large; set it to 1 to keep
+    every background variable.
 
-```{r}
+```{r settings}
 strict <- ascend(sim$background, sim$foreground, minVotes = 2)
 table(ancestralEdges(strict)$relation)
 ```
@@ -180,7 +181,7 @@ reports the size of the conditioning sets. Most tests are spent finding
 nearest ancestors, and the pairwise conditioning sets stay far smaller
 than the background layer.
 
-```{r}
+```{r cost}
 st <- ascendStats(res)
 st[c("nTests", "nPairTests", "nWitnessTests", "nBlanketTests",
     "meanPairCondSize", "maxPairCondSize", "nSweeps")]
@@ -189,16 +190,16 @@ st[c("nTests", "nPairTests", "nWitnessTests", "nBlanketTests",
 # Limitations
 
 * The two-tier order must be known. Mislabelling a few variables does
-  little harm, but feedback from the foreground to the background does.
+    little harm, but feedback from the foreground to the background does.
 * Unmeasured background variables act as hidden confounders.
 * The Fisher-z test targets linear relations. ASCEND's rules use only
-  the outcomes of the tests, so other conditional independence tests can
-  be used in principle; this version implements Fisher-z.
+    the outcomes of the tests, so other conditional independence tests can
+    be used in principle; this version implements Fisher-z.
 * In dense graphs, orientation errors are mostly reversals; directions
-  are most reliable in sparse networks.
+    are most reliable in sparse networks.
 
 # Session information
 
-```{r}
+```{r session}
 sessionInfo()
 ```

@@ -8,8 +8,9 @@ NULL
 #' @return A 0/1 matrix with entry `[a, b] = 1` if `a` is an ancestor of
 #'   `b` (diagonal `NA`), in a topological order.
 #' @examples
+#' set.seed(3)
 #' sim <- simulateTwoTier(n = 100, nBackground = 5, nForeground = 5,
-#'     sparsity = 0.5, seed = 3)
+#'     sparsity = 0.5)
 #' trueAncestral(sim)
 #' @export
 trueAncestral <- function(x) {
@@ -49,8 +50,9 @@ trueAncestral <- function(x) {
 #'   related pairs that point the right way) and `coverage` (fraction of
 #'   pairs with any verdict).
 #' @examples
+#' set.seed(123)
 #' sim <- simulateTwoTier(n = 1000, nBackground = 20, nForeground = 8,
-#'     r2 = 0.7, sparsity = 0.7, pCross = 0.1, effect = 1.5, seed = 123)
+#'     r2 = 0.7, sparsity = 0.7, pCross = 0.1, effect = 1.5)
 #' res <- ascend(sim$background, sim$foreground)
 #' evaluateAncestral(res, trueAncestral(sim))
 #' @export

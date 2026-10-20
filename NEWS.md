@@ -1,3 +1,9 @@
+# causalASCEND 0.99.1
+
+* `SummarizedExperiment` is now imported (Bioconductor dependency).
+* `simulateTwoTier()` no longer calls `set.seed()`; call it before simulating.
+* Labelled vignette chunks, 4-space indentation, no `suppressWarnings()`.
+
 # causalASCEND 0.99.0
 
 * Initial Bioconductor submission.

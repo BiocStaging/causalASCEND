@@ -13,8 +13,7 @@ simulateTwoTier(
   pCross = 0.05,
   effect = 0.8,
   linear = 1,
-  scaleBackground = TRUE,
-  seed = NULL
+  scaleBackground = TRUE
 )
 }
 \arguments{
@@ -42,8 +41,6 @@ squared, square-root, softplus or ReLU transforms of the parent.}
 to unit variance as it is drawn. Without it, background variances
 grow along background paths and swamp the foreground signal when the
 background is large.}
-
-\item{seed}{Optional random seed.}
 }
 \value{
 A list with \code{background} and \code{foreground} (numeric matrices,
@@ -58,9 +55,12 @@ from random background variables, and foreground variables form a
 random DAG among themselves. No foreground variable affects a
 background variable.
 }
+\details{
+Call \code{\link[=set.seed]{set.seed()}} first for reproducible data.
+}
 \examples{
-sim <- simulateTwoTier(n = 200, nBackground = 5, nForeground = 4,
-    seed = 1)
+set.seed(1)
+sim <- simulateTwoTier(n = 200, nBackground = 5, nForeground = 4)
 dim(sim$background)
 sim$adjacency
 }

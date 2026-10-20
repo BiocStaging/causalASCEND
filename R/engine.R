@@ -136,7 +136,7 @@
 ## dimnames contain the background labels zlabs and foreground labels
 ## xlabs. Returns a list with the ancestrality matrix and its provenance.
 .ascendEngine <- function(C, n, zlabs, xlabs, maxIter, alpha, alphaMB,
-                          fdr, minVotes, prescreen, verbose) {
+    fdr, minVotes, prescreen, verbose) {
     dX <- length(xlabs)
     vars <- c(zlabs, xlabs)
     isZ <- stats::setNames(vars %in% zlabs, vars)
